@@ -21,7 +21,7 @@ function displayResults(responseJson) {
 
     console.log(responseJson);
 
-    for (let i = 0; responseJson.data.length; i++) {
+    for (let i = 0; i < responseJson.data.length; i++) {
         $(".results-list").append(
             `<li><h3>${responseJson.data[i].fullName}</h3>
             <p>${responseJson.data[i].description}</p>
@@ -57,7 +57,7 @@ function getParkInfo(state, maxResults) {
                return response.json();
            } throw new Error(response.statusText);
        })
-       .then(responseJson => displayResults(responseJson))
+       .then(responseJson => displayResults(responseJson, maxResults))
        .catch(err => {
            $("#error-message").text(`Something went wrong: ${err.message}`);
        });
