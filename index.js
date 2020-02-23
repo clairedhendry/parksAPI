@@ -19,8 +19,6 @@ function formatQueryParams(params) {
 function displayResults(responseJson) {
     $(".results-list").empty();
 
-    console.log(responseJson);
-
     for (let i = 0; i < responseJson.data.length; i++) {
         $(".results-list").append(
             `<li><h3>${responseJson.data[i].fullName}</h3>
@@ -49,13 +47,14 @@ function getParkInfo(state, maxResults) {
       const queryString = formatQueryParams(params);
       const url = searchURL + `?` + queryString;
 
-      console.log(url);
-
+      
       fetch(url, options)
        .then(response => {
            if(response.ok) {
                return response.json();
-           } throw new Error(response.statusText);
+           } else {
+               throw new Error(response.statusText);
+           }
        })
        .then(responseJson => displayResults(responseJson, maxResults))
        .catch(err => {
@@ -66,11 +65,21 @@ function getParkInfo(state, maxResults) {
   function getInput() {
      $("#searchState").on("click", function(event) {
          event.preventDefault();
-         const state = $("input#input-state").val();
-         const maxResults = $("input#input-number").val();
+         $(".results-list").empty();
 
-         if(maxResults === "") {
-             alert("You must set a number")
+         const state = $("input#input-state").val();
+         let maxResults = $("input#input-number").val();
+
+         if (maxResults === "") {
+            maxResults = 10;
+         } 
+
+         if (state === "") {
+             return alert("You must list a state")
+         }
+
+         if (state.length > 2) {
+             return alert("Please use state abbreviation");
          }
 
          getParkInfo(state, maxResults);
