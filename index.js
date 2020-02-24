@@ -15,6 +15,12 @@ function formatQueryParams(params) {
     return queryItems.join('&');
   }
 
+function multipleStateSearch(multipleStates) {
+    const queryItems = multipleStates.map(element => `stateCode=${element}`)
+    return queryItems.join('&');
+  }
+
+
 
 function displayResults(responseJson) {
     $(".results-list").empty();
@@ -35,9 +41,15 @@ function displayResults(responseJson) {
 
 function getParkInfo(state, maxResults) {
 
+    
+
     const queryField = `fullName%2C%20description%2C%20url`;
 
-      const params = {
+          
+    if (state.length <= 2) {
+
+        const params = {
+        
         stateCode: state,
         limit: maxResults,
         fields: queryField,
@@ -60,7 +72,13 @@ function getParkInfo(state, maxResults) {
        .catch(err => {
            $("#error-message").text(`Something went wrong: ${err.message}`);
        });
-  }
+    }
+}
+
+
+
+    
+  
 
   function getInput() {
      $("#searchState").on("click", function(event) {
@@ -79,11 +97,46 @@ function getParkInfo(state, maxResults) {
          }
 
          if (state.length > 2) {
-             return alert("Please use state abbreviation");
+            state.replace(",", "");
+            let multipleStates = state.split(" ");
+            return multiState(multipleStates, maxResults);
          }
 
-         getParkInfo(state, maxResults);
+        getParkInfo(state, maxResults);
      }) 
   }
+
+
+  
+function multiState(multipleStates, maxResults) {
+
+    let moreStates = multipleStateSearch(multipleStates);
+    const queryField = `fullName%2C%20description%2C%20url`;
+
+     const params = {
+    
+        limit: maxResults,
+        fields: queryField,
+        api_key: apiKey,
+      }
+
+       
+      const queryString = formatQueryParams(params);
+      const url = searchURL + `?` + moreStates + `&` + queryString;
+
+      
+      fetch(url, options)
+       .then(response => {
+           if(response.ok) {
+               return response.json();
+           } else {
+               throw new Error(response.statusText);
+           }
+       })
+       .then(responseJson => displayResults(responseJson, maxResults))
+       .catch(err => {
+           $("#error-message").text(`Something went wrong: ${err.message}`);
+       });
+}
 
   $(getInput);
