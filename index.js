@@ -16,8 +16,8 @@ function formatQueryParams(params) {
   }
 
 function multipleStateSearch(multipleStates) {
-    const queryItems = multipleStates.map(element => `stateCode=${element}`)
-    return queryItems.join('&');
+    const queryItems = `stateCode=${multipleStates}`
+    return queryItems;
   }
 
 
@@ -97,8 +97,8 @@ function getParkInfo(state, maxResults) {
          }
 
          if (state.length > 2) {
-            state.replace(",", "");
-            let multipleStates = state.split(" ");
+            
+            let multipleStates = state.replace(" ", "");
             return multiState(multipleStates, maxResults);
          }
 
@@ -140,3 +140,6 @@ function multiState(multipleStates, maxResults) {
 }
 
   $(getInput);
+
+
+
